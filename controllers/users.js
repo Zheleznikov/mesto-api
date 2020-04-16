@@ -9,12 +9,11 @@ const UnauthorizedError = require('../errors/unauthorizedError');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
-
 // получить всех пользователей
 module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch(next);
+    .catch((err) => next(err.message));
 };
 
 // получить пользователя по id
@@ -23,11 +22,10 @@ module.exports.getCurrentUser = (req, res, next) => {
     .then((user) => {
       if (user === null) {
         throw new NotFoundError('Нет пользователя с таким id');
-      } else {
-        res.send({ data: user });
       }
+      res.send({ data: user });
     })
-    .catch(next);
+    .catch((err) => next(err.message));
 };
 
 // создать пользователя
@@ -54,7 +52,7 @@ module.exports.createUser = (req, res, next) => {
     //     next(new BadRequestError('Пользователь с таким email уже существует'));
     //   }
     // })
-    .catch((err) => next(new BadRequestError(`Данные не прошли валидацию, ${err.message}`)));
+    .catch((err) => next(new BadRequestError(`Данные не прошли валидацию: ${err.message}`)));
 };
 
 // залогиниться
@@ -74,7 +72,7 @@ module.exports.login = (req, res, next) => {
         sameSite: true,
       }).send({ message: 'Авторизация прошла успешно' });
     })
-    .catch((err) => next(new UnauthorizedError(`Неудачная авторизация, ${err.message}`)));
+    .catch((err) => next(new UnauthorizedError(`Неудачная авторизация: ${err.message}`)));
 };
 
 // изменить информацию о пользователе (о себе)
@@ -86,7 +84,7 @@ module.exports.updateMyProfile = (req, res, next) => {
     upsert: true,
   })
     .then((user) => res.send({ data: user }))
-    .catch(() => next(new BadRequestError('Что-то не так с новым именем или информацией')));
+    .catch((err) => next(new BadRequestError(err.message)));
 };
 
 // изменить аватар пользователя (себя)
@@ -98,5 +96,5 @@ module.exports.updateMyAvatar = (req, res, next) => {
     upsert: true,
   })
     .then((user) => res.send({ data: user }))
-    .catch(() => next(new BadRequestError('Новый аватар какой-то не такой')));
+    .catch((err) => next(new BadRequestError(err.message)));
 };

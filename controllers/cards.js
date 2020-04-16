@@ -7,7 +7,7 @@ module.exports.getCards = (req, res, next) => {
   Card.find({})
     .populate('user')
     .then((cards) => res.send({ data: cards }))
-    .catch(next);
+    .catch((err) => next(err.message));
 };
 
 // добавить карточку
@@ -15,7 +15,7 @@ module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.send({ data: card }))
-    .catch(next);
+    .catch((err) => next(err.message));
 };
 
 // удалить карточку
@@ -29,11 +29,9 @@ module.exports.deleteCard = (req, res, next) => {
         throw new ForbiddenError('Нельзя удалить эту карточку потому что ее может удалить только владелец');
       }
       card.remove()
-        .then((removedCard) => {
-          res.send({ message: 'Эта карточка была удалена', removedCard });
-        });
+        .then((removedCard) => res.send({ message: 'Эта карточка была удалена', removedCard }));
     })
-    .catch(next);
+    .catch((err) => next(err.message));
 };
 
 // поставить лайк карточке
@@ -42,11 +40,10 @@ module.exports.likeCard = (req, res, next) => {
     .then((card) => {
       if (card === null) {
         throw new NotFoundError('Нет карточки с таким id');
-      } else {
-        res.send({ data: card });
       }
+      res.send({ data: card });
     })
-    .catch(next);
+    .catch((err) => next(err.message));
 };
 
 // убрать лайк у карточки
@@ -55,9 +52,8 @@ module.exports.dislikeCard = (req, res, next) => {
     .then((card) => {
       if (card === null) {
         throw new NotFoundError('Нет карточки с таким id');
-      } else {
-        res.send({ data: card });
       }
+      res.send({ data: card });
     })
-    .catch(next);
+    .catch((err) => next(err.message));
 };
