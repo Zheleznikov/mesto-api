@@ -13,7 +13,7 @@ const { NODE_ENV, JWT_SECRET } = process.env;
 module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch((next));
+    .catch(next);
 };
 
 // получить пользователя по id
@@ -26,7 +26,7 @@ module.exports.getCurrentUser = (req, res, next) => {
         res.send({ data: user });
       }
     })
-    .catch((next));
+    .catch(next);
 };
 
 // создать пользователя
@@ -75,7 +75,7 @@ module.exports.updateMyProfile = (req, res, next) => {
     upsert: true,
   })
     .then((user) => res.send({ data: user }))
-    .catch((next));
+    .catch(() => next(new BadRequestError('Данные не прошли валидацию')));
 };
 
 // изменить аватар пользователя (себя)
@@ -87,5 +87,5 @@ module.exports.updateMyAvatar = (req, res, next) => {
     upsert: true,
   })
     .then((user) => res.send({ data: user }))
-    .catch((next));
+    .catch(() => next(new BadRequestError('Данные не прошли валидацию')));
 };
