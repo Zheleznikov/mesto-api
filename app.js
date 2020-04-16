@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
@@ -24,24 +25,21 @@ mongoose.connect(config.CONNECTION_ADDRESS, {
   useUnifiedTopology: true,
 });
 
-// собираем запросы
+// лог запросов
 app.use(requestLogger);
 
-// краш-тест
-app.use('/', require('./routes/crashTest'));
-
+app.use('/', require('./routes/crashTest')); // CRASH TEST - REMOVE AFTER ALL!!
 app.use('/', require('./routes/sign'));
 app.use('/', auth, require('./routes/users'));
 app.use('/', auth, require('./routes/cards'));
 
 app.use((req, res) => res.status(404).send({ message: 'Запрашиваемый ресурс не найден' }));
 
-// записываем логи ошибок
+// лог ошибок
 app.use(errorLogger);
 app.use(errors());
 
 // собираем все ошибки
-// eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
   res

@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 require('dotenv').config();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -39,13 +40,19 @@ module.exports.createUser = (req, res, next) => {
       email: req.body.email,
       password: hash,
     }))
-    .then((user) => res.status(201).send({
-      _id: user._id,
-      name: user.name,
-      about: user.about,
-      avatar: user.avatar,
-      email: user.email,
-    }))
+    .then((user) => {
+      if ([].includes(user.email)) { // здесь должно быть условие if(<массивСЭмэилами>.includes(user.email))
+        throw new BadRequestError('Пользователь с таким email уже существует'); // но я не понимаю, как обратиться к массиву со всеми пользователями :(
+      } else {
+        res.status(201).send({
+          _id: user._id,
+          name: user.name,
+          about: user.about,
+          avatar: user.avatar,
+          email: user.email,
+        });
+      }
+    })
     .catch(() => next(new BadRequestError('Данные не прошли валидацию')));
 };
 
@@ -55,6 +62,9 @@ module.exports.login = (req, res, next) => {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
+      if (!user.email) {
+        throw new NotFoundError('Такого пользователя нет'); // не работает
+      }
       const token = jwt.sign({ _id: user._id },
         NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
       res.cookie('jwt', token, {
@@ -75,7 +85,7 @@ module.exports.updateMyProfile = (req, res, next) => {
     upsert: true,
   })
     .then((user) => res.send({ data: user }))
-    .catch(() => next(new BadRequestError('Данные не прошли валидацию')));
+    .catch(() => next(new BadRequestError('Что-то не так с новым именем или информацией')));
 };
 
 // изменить аватар пользователя (себя)
@@ -87,5 +97,5 @@ module.exports.updateMyAvatar = (req, res, next) => {
     upsert: true,
   })
     .then((user) => res.send({ data: user }))
-    .catch(() => next(new BadRequestError('Данные не прошли валидацию')));
+    .catch(() => next(new BadRequestError('Новый аватар какой-то не такой')));
 };
