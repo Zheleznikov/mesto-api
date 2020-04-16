@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
 const { getUsers, getCurrentUser, updateMyProfile, updateMyAvatar } = require('../controllers/users');
+const urlReg = require('../validation__modules/urlReg');
 
 // получить всех пользователей
 router.get('/users', getUsers);
@@ -23,7 +24,7 @@ router.patch('/users/me', celebrate({
 // обновить аватарку свою
 router.patch('/users/me/avatar', celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().required().uri(),
+    avatar: Joi.string().required().regex(urlReg),
   }),
 }), updateMyAvatar);
 

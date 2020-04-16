@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
 const { createUser, login } = require('../controllers/users');
+const urlReg = require('../validation__modules/urlReg');
 
 // залогиниться
 router.post('/signin', celebrate({
@@ -15,7 +16,7 @@ router.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
     about: Joi.string().required().min(2).max(30),
-    avatar: Joi.string().required().uri(),
+    avatar: Joi.string().required().regex(urlReg),
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
   }),
