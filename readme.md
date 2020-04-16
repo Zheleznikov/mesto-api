@@ -38,6 +38,7 @@
 - Первый - на создание пользователя:
 `/signup` метод POST
 В теле запроса нужно отправить объект вида:
+
     {
       "name": "My name",
       "about": "My info",
@@ -49,6 +50,7 @@
 - Второй запрос для того чтобы залогиниться:
 `/signin` метод POST
 В теле запроса нужно отправить объект вида:
+
     {
       "email": "mymail@domain.ru",
       "password": "1234!@#$"
@@ -65,6 +67,7 @@
 ##### POST
 - `/cards` - добавить карточку;
 В теле запроса нужно отправить объект вида:
+
     {
       "name": "Beatiful place",
       "link": "https://nice-pictures.com/beatifulplace.jpg"
@@ -80,6 +83,7 @@
 ##### PATCH 
 - `/users/me` - обновить данные о себе;
 В теле запроса нужно отправить объект вида:
+
     {
       "name": "New name",
       "about": "I change my mind, now I'm..."
@@ -87,6 +91,7 @@
 
 - `/users/me/avatar` - обновить свой аватар;
 В теле запроса нужно отправить объект вида:
+
     {
       "avatar": "https://web-site.com/reallycoolavatar.jpg"
     }
