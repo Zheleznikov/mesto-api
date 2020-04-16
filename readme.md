@@ -39,8 +39,13 @@
 `/signup` метод POST
 В теле запроса нужно отправить объект вида:
 	
-    Accept: application/json
-    Content-Type: application/json
+    {
+      "name": "My name",
+      "about": "My info",
+      "avatar": "https://web-site.com/myavatar.jpg",
+      "email": "mymail@domain.ru",
+      "password": "1234!@#$"
+    }
        
 Второй запрос для того чтобы залогиниться:
 `/signin` метод POST
