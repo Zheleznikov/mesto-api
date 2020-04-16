@@ -41,19 +41,20 @@ module.exports.createUser = (req, res, next) => {
       password: hash,
     }))
     .then((user) => {
-      if ([].includes(user.email)) { // здесь должно быть условие if(<массивСЭмэилами>.includes(user.email))
-        throw new BadRequestError('Пользователь с таким email уже существует'); // но я не понимаю, как обратиться к массиву со всеми пользователями :(
-      } else {
-        res.status(201).send({
-          _id: user._id,
-          name: user.name,
-          about: user.about,
-          avatar: user.avatar,
-          email: user.email,
-        });
-      }
+      res.status(201).send({
+        _id: user._id,
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+        email: user.email,
+      });
     })
-    .catch(() => next(new BadRequestError('Данные не прошли валидацию')));
+    // .catch((err) => {
+    //   if (err.message.includes('E11000')) {
+    //     next(new BadRequestError('Пользователь с таким email уже существует'));
+    //   }
+    // })
+    .catch((err) => next(new BadRequestError(`Данные не прошли валидацию, ${err.message}`)));
 };
 
 // залогиниться
@@ -63,7 +64,7 @@ module.exports.login = (req, res, next) => {
   return User.findUserByCredentials(email, password)
     .then((user) => {
       if (!user.email) {
-        throw new NotFoundError('Такого пользователя нет'); // не работает
+        throw new NotFoundError('Такого пользователя нет');
       }
       const token = jwt.sign({ _id: user._id },
         NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
@@ -73,7 +74,7 @@ module.exports.login = (req, res, next) => {
         sameSite: true,
       }).send({ message: 'Авторизация прошла успешно' });
     })
-    .catch(() => next(new UnauthorizedError('Неудачная авторизация')));
+    .catch((err) => next(new UnauthorizedError(`Неудачная авторизация, ${err.message}`)));
 };
 
 // изменить информацию о пользователе (о себе)
