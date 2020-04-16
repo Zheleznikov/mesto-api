@@ -38,18 +38,10 @@
 - Первый - на создание пользователя:
 `/signup` метод POST
 В теле запроса нужно отправить объект вида:
-    
-    так так 
-    
-    {
-      "name": "My name",
-      "about": "My info",
-      "avatar": "https://web-site.com/myavatar.jpg",
-      "email": "mymail@domain.ru",
-      "password": "1234!@#$"
-    }
-    
-
+	
+    Accept: application/json
+    Content-Type: application/json
+       
 - Второй запрос для того чтобы залогиниться:
 `/signin` метод POST
 В теле запроса нужно отправить объект вида:
