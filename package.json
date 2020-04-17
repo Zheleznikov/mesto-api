@@ -1,7 +1,7 @@
 {
-  "name": "12sprint",
-  "version": "1.0.0",
-  "description": "",
+  "name": "15sprint",
+  "version": "1.4.0",
+  "description": "deploy backend learning project",
   "main": "index.js",
   "scripts": {
     "start": "node app.js",
@@ -18,12 +18,17 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
+    "celebrate": "^12.1.0",
     "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "express-winston": "^4.0.3",
     "helmet": "^3.22.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.5",
-    "validator": "^13.0.0"
+    "mongoose-unique-validator": "^2.0.3",
+    "validator": "^13.0.0",
+    "winston": "^3.2.1"
   }
 }

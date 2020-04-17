@@ -1,33 +1,35 @@
+/* eslint-disable max-len */
 require('dotenv').config();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const NotFoundError = require('../errors/notFoundError');
+const BadRequestError = require('../errors/badRequestError');
+const UnauthorizedError = require('../errors/unauthorizedError');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
-
 // получить всех пользователей
-module.exports.getUsers = (req, res) => {
+module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch(() => res.status(500).send({ message: 'Что-то с сервером...' }));
+    .catch((err) => next({ message: err.message }));
 };
 
 // получить пользователя по id
-module.exports.getCurrentUser = (req, res) => {
+module.exports.getCurrentUser = (req, res, next) => {
   User.findById(req.params.id)
     .then((user) => {
       if (user === null) {
-        res.status(404).send({ message: 'Не найден пользователь с таким id' });
-      } else {
-        res.send({ data: user });
+        throw new NotFoundError('Нет пользователя с таким id');
       }
+      res.send({ data: user });
     })
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка при получении пользователя' }));
+    .catch((err) => next({ message: err.message }));
 };
 
 // создать пользователя
-module.exports.createUser = (req, res) => {
+module.exports.createUser = (req, res, next) => {
   bcrypt.hash(req.body.password, 10)
     .then((hash) => User.create({
       name: req.body.name,
@@ -36,23 +38,32 @@ module.exports.createUser = (req, res) => {
       email: req.body.email,
       password: hash,
     }))
-    .then((user) => res.status(201).send({
-      _id: user._id,
-      name: user.name,
-      about: user.about,
-      avatar: user.avatar,
-      email: user.email,
-    }))
-    .catch((err) => res.status(400).send(err));
+    .then((user) => {
+      res.status(201).send({
+        _id: user._id,
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+        email: user.email,
+      });
+    })
+    // .catch((err) => {
+    //   if (err.message.includes('E11000')) {
+    //     next(new BadRequestError('Пользователь с таким email уже существует'));
+    //   }
+    // })
+    .catch((err) => next(new BadRequestError(`Данные не прошли валидацию: ${err.message}`)));
 };
 
-
 // залогиниться
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
+      if (!user.email) {
+        throw new NotFoundError('Такого пользователя нет');
+      }
       const token = jwt.sign({ _id: user._id },
         NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
       res.cookie('jwt', token, {
@@ -61,13 +72,11 @@ module.exports.login = (req, res) => {
         sameSite: true,
       }).send({ message: 'Авторизация прошла успешно' });
     })
-    .catch((err) => {
-      res.status(401).send({ message: err.message });
-    });
+    .catch((err) => next(new UnauthorizedError(`Неудачная авторизация: ${err.message}`)));
 };
 
-// изменить информацию о пользователе (обо мне)
-module.exports.updateMyProfile = (req, res) => {
+// изменить информацию о пользователе (о себе)
+module.exports.updateMyProfile = (req, res, next) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(req.user._id, { name, about }, {
     new: true,
@@ -75,11 +84,11 @@ module.exports.updateMyProfile = (req, res) => {
     upsert: true,
   })
     .then((user) => res.send({ data: user }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка при изменении информации пользователя' }));
+    .catch((err) => next(new BadRequestError(err.message)));
 };
 
-// изменить аватар пользователя (меня)
-module.exports.updateMyAvatar = (req, res) => {
+// изменить аватар пользователя (себя)
+module.exports.updateMyAvatar = (req, res, next) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(req.user._id, { avatar }, {
     new: true,
@@ -87,5 +96,5 @@ module.exports.updateMyAvatar = (req, res) => {
     upsert: true,
   })
     .then((user) => res.send({ data: user }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка при изменении аватара' }));
+    .catch((err) => next(new BadRequestError(err.message)));
 };
