@@ -7,7 +7,7 @@ module.exports.getCards = (req, res, next) => {
   Card.find({})
     .populate('user')
     .then((cards) => res.send({ data: cards }))
-    .catch((err) => next(err.message));
+    .catch((err) => next({ message: err.message }));
 };
 
 // добавить карточку
@@ -15,7 +15,7 @@ module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.send({ data: card }))
-    .catch((err) => next(err.message));
+    .catch((err) => next({ message: err.message }));
 };
 
 // удалить карточку
@@ -31,7 +31,7 @@ module.exports.deleteCard = (req, res, next) => {
       card.remove()
         .then((removedCard) => res.send({ message: 'Эта карточка была удалена', removedCard }));
     })
-    .catch((err) => next(err.message));
+    .catch((err) => next({ message: err.message }));
 };
 
 // поставить лайк карточке
@@ -43,7 +43,7 @@ module.exports.likeCard = (req, res, next) => {
       }
       res.send({ data: card });
     })
-    .catch((err) => next(err.message));
+    .catch((err) => next({ message: err.message }));
 };
 
 // убрать лайк у карточки
@@ -55,5 +55,5 @@ module.exports.dislikeCard = (req, res, next) => {
       }
       res.send({ data: card });
     })
-    .catch((err) => next(err.message));
+    .catch((err) => next({ message: err.message }));
 };

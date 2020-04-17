@@ -13,7 +13,7 @@ const { NODE_ENV, JWT_SECRET } = process.env;
 module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch((err) => next(err.message));
+    .catch((err) => next({ message: err.message }));
 };
 
 // получить пользователя по id
@@ -25,7 +25,7 @@ module.exports.getCurrentUser = (req, res, next) => {
       }
       res.send({ data: user });
     })
-    .catch((err) => next(err.message));
+    .catch((err) => next({ message: err.message }));
 };
 
 // создать пользователя
