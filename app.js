@@ -30,8 +30,9 @@ mongoose.connect(config.CONNECTION_ADDRESS, {
 // лог запросов
 app.use(requestLogger);
 
-app.use('/', require('./routes/crashTest')); // CRASH TEST - REMOVE AFTER ALL!!
 app.use('/', require('./routes/sign'));
+
+// app.use(auth);
 app.use('/', auth, require('./routes/users'));
 app.use('/', auth, require('./routes/cards'));
 
