@@ -15,7 +15,7 @@ const app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(helmet());
+// app.use(helmet());
 app.use(cookieParser());
 app.use(cors());
 
@@ -33,8 +33,8 @@ app.use(requestLogger);
 app.use('/', require('./routes/sign'));
 
 // app.use(auth);
-app.use('/', auth, require('./routes/users'));
-app.use('/', auth, require('./routes/cards'));
+app.use('/', require('./routes/users'));
+app.use('/', require('./routes/cards'));
 
 app.use((req, res) => res.status(404).send({ message: 'Запрашиваемый ресурс не найден' }));
 
@@ -48,8 +48,8 @@ app.use((err, req, res, next) => {
   res
     .status(statusCode)
     .send({
-      message: statusCode === 500
-        ? 'На сервере произошла ошибка' : message,
+      message: statusCode === 500 ?
+        'На сервере произошла ошибка' : message,
     });
 });
 
