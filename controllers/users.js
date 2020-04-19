@@ -69,11 +69,12 @@ module.exports.login = (req, res, next) => {
       console.log('авторизация прошла успешно');
       const token = jwt.sign({ _id: user._id },
         NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
-      res.cookie('jwt', token, {
-        httpOnly: true,
-        maxAge: 3600000 * 24 * 7,
-        sameSite: true,
-      }).send({ message: 'Авторизация прошла успешно' });
+      // res.cookie('jwt', token, {
+      //   httpOnly: true,
+      //   maxAge: 3600000 * 24 * 7,
+      //   sameSite: true,
+      // })
+      res.send({ token });
     })
     .catch((err) => next(new UnauthorizedError(`Неудачная авторизация: ${err.message}`)));
 };
