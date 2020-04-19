@@ -66,6 +66,7 @@ module.exports.login = (req, res, next) => {
       if (!user.email) {
         throw new NotFoundError('Такого пользователя нет');
       }
+      console.log('авторизация прошла успешно');
       const token = jwt.sign({ _id: user._id },
         NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
       res.cookie('jwt', token, {

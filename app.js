@@ -32,7 +32,7 @@ app.use(requestLogger);
 
 app.use('/', require('./routes/sign'));
 
-// app.use(auth);
+app.use(auth);
 app.use('/', require('./routes/users'));
 app.use('/', require('./routes/cards'));
 
