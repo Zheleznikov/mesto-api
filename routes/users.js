@@ -29,6 +29,6 @@ router.patch('/users/me/avatar', celebrate({
 }), updateMyAvatar);
 
 // получить свои данные
-router.post('/users/myid', getMyData);
+router.post('/users/mydata', getMyData);
 
 module.exports = router;
