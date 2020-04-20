@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
-const { getUsers, getCurrentUser, updateMyProfile, updateMyAvatar, getMyData } = require('../controllers/users');
+const { getUsers, getCurrentUser, updateMyProfile, updateMyAvatar, getMyData, logout } = require('../controllers/users');
 const urlReg = require('../validation__modules/urlReg');
 const auth = require('../middlewares/auth');
 // получить всех пользователей
@@ -30,5 +30,7 @@ router.patch('/users/me/avatar', auth, celebrate({
 
 // получить свои данные
 router.post('/users/mydata', auth, getMyData);
+
+router.post('/logout', auth, logout);
 
 module.exports = router;

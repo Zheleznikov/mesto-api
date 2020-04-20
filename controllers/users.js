@@ -79,6 +79,9 @@ module.exports.login = (req, res, next) => {
     .catch((err) => next(new UnauthorizedError(`Неудачная авторизация: ${err.message}`)));
 };
 
+// выйти
+module.exports.logout = (req, res, next) => res.status(201).send({ login: false });
+
 // изменить информацию о пользователе (о себе)
 module.exports.updateMyProfile = (req, res, next) => {
   const { name, about } = req.body;
