@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
-const { getUsers, getCurrentUser, updateMyProfile, updateMyAvatar } = require('../controllers/users');
+const { getUsers, getCurrentUser, updateMyProfile, updateMyAvatar, getMyData } = require('../controllers/users');
 const urlReg = require('../validation__modules/urlReg');
 
 // получить всех пользователей
@@ -27,5 +27,8 @@ router.patch('/users/me/avatar', celebrate({
     avatar: Joi.string().required().regex(urlReg),
   }),
 }), updateMyAvatar);
+
+// получить свои данные
+router.post('/users/myid', getMyData);
 
 module.exports = router;

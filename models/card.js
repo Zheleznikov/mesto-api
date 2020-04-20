@@ -1,5 +1,29 @@
 const mongoose = require('mongoose');
 const validate = require('validator');
+const userModel = require('./user');
+
+// const ownerSchema = new mongoose.Schema({
+//   owner: {
+//     type: mongoose.Schema.Types.ObjectId,
+//     ref: 'user',
+//     required: true,
+//   },
+//   // name: {
+//   //   type: String,
+//   //   ref: 'user',
+//   //   required: true,
+//   // },
+//   // about: {
+//   //   type: String,
+//   //   ref: 'user',
+//   //   required: true,
+//   // },
+//   // avatar: {
+//   //   type: String,
+//   //   ref: 'user',
+//   //   required: true,
+//   // },
+// });
 
 const cardSchema = new mongoose.Schema({
   name: {
@@ -22,6 +46,7 @@ const cardSchema = new mongoose.Schema({
     ref: 'user',
     required: true,
   },
+  // owner: ownerSchema,
   likes: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user',

@@ -74,7 +74,7 @@ module.exports.login = (req, res, next) => {
       //   maxAge: 3600000 * 24 * 7,
       //   sameSite: true,
       // })
-      res.send({ token });
+      res.send({ user, token });
     })
     .catch((err) => next(new UnauthorizedError(`Неудачная авторизация: ${err.message}`)));
 };
@@ -99,6 +99,13 @@ module.exports.updateMyAvatar = (req, res, next) => {
     runValidators: true,
     upsert: true,
   })
+    .then((user) => res.send({ data: user }))
+    .catch((err) => next(new BadRequestError(err.message)));
+};
+
+// получить свои данные
+module.exports.getMyData = (req, res, next) => {
+  User.findById(req.user._id)
     .then((user) => res.send({ data: user }))
     .catch((err) => next(new BadRequestError(err.message)));
 };

@@ -1,12 +1,15 @@
 const Card = require('../models/card');
+const User = require('../models/user');
 const NotFoundError = require('../errors/notFoundError');
 const ForbiddenError = require('../errors/forbiddenError');
 
 // получить все карточки
 module.exports.getCards = (req, res, next) => {
   Card.find({})
-    .populate('user')
-    .then((cards) => res.send({ data: cards }))
+    .populate({ path: 'owner', model: User })
+    .then((cards) => {
+      res.send({ data: cards });
+    })
     .catch((err) => next({ message: err.message }));
 };
 
@@ -14,7 +17,10 @@ module.exports.getCards = (req, res, next) => {
 module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   Card.create({ name, link, owner: req.user._id })
-    .then((card) => res.send({ data: card }))
+    .populate({ path: 'owner', model: User })
+    .then((card) => {
+      res.send({ data: card });
+    })
     .catch((err) => next({ message: err.message }));
 };
 
