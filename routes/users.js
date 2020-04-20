@@ -31,6 +31,6 @@ router.patch('/users/me/avatar', auth, celebrate({
 // получить свои данные
 router.post('/users/mydata', auth, getMyData);
 
-router.post('/logout', auth, logout);
+// router.post('/logout', auth, logout);
 
 module.exports = router;

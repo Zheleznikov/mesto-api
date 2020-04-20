@@ -80,7 +80,9 @@ module.exports.login = (req, res, next) => {
 };
 
 // выйти
-module.exports.logout = (req, res, next) => res.status(201).send({ login: false });
+module.exports.logout = (req, res, next) => {
+
+};
 
 // изменить информацию о пользователе (о себе)
 module.exports.updateMyProfile = (req, res, next) => {
