@@ -98,3 +98,10 @@ module.exports.updateMyAvatar = (req, res, next) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => next(new BadRequestError(err.message)));
 };
+
+// получить данные своего пользователя
+module.exports.getMyData = (req, res, next) => {
+  User.findById(req.user._id)
+    .then((user) => res.send({ data: user }))
+    .catch((err) => next(new BadRequestError(err.message)));
+};
