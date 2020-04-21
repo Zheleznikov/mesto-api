@@ -1,8 +1,10 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
-const { getUsers, getCurrentUser, updateMyProfile, updateMyAvatar, getMyData, logout } = require('../controllers/users');
+const { getUsers, getCurrentUser, updateMyProfile, updateMyAvatar, getSigninUser, logout } = require('../controllers/users');
 const urlReg = require('../validation__modules/urlReg');
 const auth = require('../middlewares/auth');
+
+
 // получить всех пользователей
 router.get('/users', getUsers);
 
@@ -12,6 +14,9 @@ router.get('/users/:id', auth, celebrate({
     id: Joi.string().alphanum().length(24),
   }),
 }), getCurrentUser);
+
+// получить информацию о себе
+router.get('/me', auth, getSigninUser);
 
 // обновить информацию о себе
 router.patch('/users/me', auth, celebrate({
@@ -27,10 +32,5 @@ router.patch('/users/me/avatar', auth, celebrate({
     avatar: Joi.string().required().regex(urlReg),
   }),
 }), updateMyAvatar);
-
-// получить свои данные
-router.post('/users/mydata', auth, getMyData);
-
-// router.post('/logout', auth, logout);
 
 module.exports = router;

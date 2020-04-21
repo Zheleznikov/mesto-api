@@ -9,6 +9,7 @@ const UnauthorizedError = require('../errors/unauthorizedError');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
+
 // получить всех пользователей
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -16,8 +17,10 @@ module.exports.getUsers = (req, res, next) => {
     .catch((err) => next({ message: err.message }));
 };
 
-// получить пользователя по id
+// получить данные о пользователе по id
 module.exports.getCurrentUser = (req, res, next) => {
+  console.log(req.user._id);
+  console.log(req.params.id);
   User.findById(req.params.id)
     .then((user) => {
       if (user === null) {
@@ -26,6 +29,19 @@ module.exports.getCurrentUser = (req, res, next) => {
       res.send({ data: user });
     })
     .catch((err) => next({ message: err.message }));
+};
+
+// получить данные о себе
+module.exports.getSigninUser = (req, res, next) => {
+  console.log(req.user._id);
+  User.findById(req.user._id)
+    .then((user) => {
+      if (user === null) {
+        throw new NotFoundError('Нет пользователя с таким id');
+      }
+      res.send({ data: user });
+    })
+    .catch((err) => next({ message: err }));
 };
 
 // создать пользователя
@@ -45,35 +61,25 @@ module.exports.createUser = (req, res, next) => {
         about: user.about,
         avatar: user.avatar,
         email: user.email,
+        message: 'Congratulate',
       });
     })
-    // .catch((err) => {
-    //   if (err.message.includes('E11000')) {
-    //     next(new BadRequestError('Пользователь с таким email уже существует'));
-    //   }
-    // })
     .catch((err) => next(new BadRequestError(`Данные не прошли валидацию: ${err.message}`)));
 };
 
 // залогиниться
 module.exports.login = (req, res, next) => {
-// console.log(req);
   const { email, password } = req.body;
-  console.log(email, password);
+  console.log(email, password); // ПОТОМ УДАЛИТЬ
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
       if (!user.email) {
         throw new NotFoundError('Такого пользователя нет');
       }
-      console.log('авторизация прошла успешно');
+      console.log('авторизация прошла успешно'); // ПОТОМ УДАЛИТЬ
       const token = jwt.sign({ _id: user._id },
         NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
-      // res.cookie('jwt', token, {
-      //   httpOnly: true,
-      //   maxAge: 3600000 * 24 * 7,
-      //   sameSite: true,
-      // })
       res.send({ user, token });
     })
     .catch((err) => next(new UnauthorizedError(`Неудачная авторизация: ${err.message}`)));
@@ -104,13 +110,6 @@ module.exports.updateMyAvatar = (req, res, next) => {
     runValidators: true,
     upsert: true,
   })
-    .then((user) => res.send({ data: user }))
-    .catch((err) => next(new BadRequestError(err.message)));
-};
-
-// получить свои данные
-module.exports.getMyData = (req, res, next) => {
-  User.findById(req.user._id)
     .then((user) => res.send({ data: user }))
     .catch((err) => next(new BadRequestError(err.message)));
 };
