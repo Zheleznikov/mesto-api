@@ -1,12 +1,10 @@
 /* eslint-disable consistent-return */
 const jwt = require('jsonwebtoken');
-const blacklist = require('../validation__modules/blacklist');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;
-  console.log(blacklist);
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
     return res
