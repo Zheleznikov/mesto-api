@@ -22,4 +22,5 @@ router.post('/signup', celebrate({
   }),
 }), createUser);
 
+
 module.exports = router;

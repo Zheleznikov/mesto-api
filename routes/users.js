@@ -1,9 +1,8 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
-const { getUsers, getCurrentUser, updateMyProfile, updateMyAvatar, getSigninUser, logout } = require('../controllers/users');
+const { getUsers, getCurrentUser, updateMyProfile, updateMyAvatar, getSigninUser } = require('../controllers/users');
 const urlReg = require('../validation__modules/urlReg');
 const auth = require('../middlewares/auth');
-
 
 // получить всех пользователей
 router.get('/users', getUsers);
@@ -32,5 +31,6 @@ router.patch('/users/me/avatar', auth, celebrate({
     avatar: Joi.string().required().regex(urlReg),
   }),
 }), updateMyAvatar);
+
 
 module.exports = router;

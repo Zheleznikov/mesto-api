@@ -1,4 +1,6 @@
+/* eslint-disable operator-linebreak */
 /* eslint-disable no-unused-vars */
+
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
@@ -8,14 +10,14 @@ const helmet = require('helmet');
 const { errors } = require('celebrate');
 const cors = require('cors');
 const config = require('./config');
-const auth = require('./middlewares/auth');
+// const auth = require('./middlewares/auth');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-// app.use(helmet());
+app.use(helmet());
 app.use(cookieParser());
 app.use(cors());
 
@@ -31,7 +33,6 @@ mongoose.connect(config.CONNECTION_ADDRESS, {
 app.use(requestLogger);
 
 app.use('/', require('./routes/sign'));
-
 app.use('/', require('./routes/users'));
 app.use('/', require('./routes/cards'));
 

@@ -3,9 +3,11 @@ require('dotenv').config();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const Card = require('../models/card');
 const NotFoundError = require('../errors/notFoundError');
 const BadRequestError = require('../errors/badRequestError');
 const UnauthorizedError = require('../errors/unauthorizedError');
+
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
@@ -13,14 +15,13 @@ const { NODE_ENV, JWT_SECRET } = process.env;
 // получить всех пользователей
 module.exports.getUsers = (req, res, next) => {
   User.find({})
+    .populate({ path: 'cards', model: Card })
     .then((users) => res.send({ data: users }))
     .catch((err) => next({ message: err.message }));
 };
 
 // получить данные о пользователе по id
 module.exports.getCurrentUser = (req, res, next) => {
-  console.log(req.user._id);
-  console.log(req.params.id);
   User.findById(req.params.id)
     .then((user) => {
       if (user === null) {
@@ -33,7 +34,6 @@ module.exports.getCurrentUser = (req, res, next) => {
 
 // получить данные о себе
 module.exports.getSigninUser = (req, res, next) => {
-  console.log(req.user._id);
   User.findById(req.user._id)
     .then((user) => {
       if (user === null) {
@@ -86,9 +86,15 @@ module.exports.login = (req, res, next) => {
 };
 
 // выйти
-module.exports.logout = (req, res, next) => {
-
+module.exports.logout = (req, res, next) => { // ??
+  User.findById(req.user._id)
+    .then(() => {
+      // const token = req.headers.authorization;
+      res.send({ message: 'logout' });
+    })
+    .catch((err) => next({ message: err }));
 };
+
 
 // изменить информацию о пользователе (о себе)
 module.exports.updateMyProfile = (req, res, next) => {
