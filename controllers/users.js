@@ -12,7 +12,10 @@ const UnauthorizedError = require('../errors/unauthorizedError');
 const { NODE_ENV, JWT_SECRET } = process.env;
 
 
-// получить всех пользователей
+// получить всех пользователей сейчас же
+
+
+
 module.exports.getUsers = (req, res, next) => {
   User.find({})
     .populate({ path: 'cards', model: Card })
@@ -116,6 +119,13 @@ module.exports.updateMyAvatar = (req, res, next) => {
     runValidators: true,
     upsert: true,
   })
+    .then((user) => res.send({ data: user }))
+    .catch((err) => next(new BadRequestError(err.message)));
+};
+
+// получить данные своего пользователя
+module.exports.getMyData = (req, res, next) => {
+  User.findById(req.user._id)
     .then((user) => res.send({ data: user }))
     .catch((err) => next(new BadRequestError(err.message)));
 };
