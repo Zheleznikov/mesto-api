@@ -3,20 +3,24 @@ require('dotenv').config();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const Card = require('../models/card');
 const NotFoundError = require('../errors/notFoundError');
 const BadRequestError = require('../errors/badRequestError');
 const UnauthorizedError = require('../errors/unauthorizedError');
 
+
 const { NODE_ENV, JWT_SECRET } = process.env;
+
 
 // получить всех пользователей
 module.exports.getUsers = (req, res, next) => {
   User.find({})
+    .populate({ path: 'cards', model: Card })
     .then((users) => res.send({ data: users }))
     .catch((err) => next({ message: err.message }));
 };
 
-// получить пользователя по id
+// получить данные о пользователе по id
 module.exports.getCurrentUser = (req, res, next) => {
   User.findById(req.params.id)
     .then((user) => {
@@ -26,6 +30,18 @@ module.exports.getCurrentUser = (req, res, next) => {
       res.send({ data: user });
     })
     .catch((err) => next({ message: err.message }));
+};
+
+// получить данные о себе
+module.exports.getSigninUser = (req, res, next) => {
+  User.findById(req.user._id)
+    .then((user) => {
+      if (user === null) {
+        throw new NotFoundError('Нет пользователя с таким id');
+      }
+      res.send({ data: user });
+    })
+    .catch((err) => next({ message: err }));
 };
 
 // создать пользователя
@@ -45,35 +61,40 @@ module.exports.createUser = (req, res, next) => {
         about: user.about,
         avatar: user.avatar,
         email: user.email,
+        message: 'Congratulate',
       });
     })
-    // .catch((err) => {
-    //   if (err.message.includes('E11000')) {
-    //     next(new BadRequestError('Пользователь с таким email уже существует'));
-    //   }
-    // })
     .catch((err) => next(new BadRequestError(`Данные не прошли валидацию: ${err.message}`)));
 };
 
 // залогиниться
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
+  console.log(email, password); // ПОТОМ УДАЛИТЬ
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
       if (!user.email) {
         throw new NotFoundError('Такого пользователя нет');
       }
+      console.log('авторизация прошла успешно'); // ПОТОМ УДАЛИТЬ
       const token = jwt.sign({ _id: user._id },
         NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
-      res.cookie('jwt', token, {
-        httpOnly: true,
-        maxAge: 3600000 * 24 * 7,
-        sameSite: true,
-      }).send({ message: 'Авторизация прошла успешно' });
+      res.send({ user, token });
     })
     .catch((err) => next(new UnauthorizedError(`Неудачная авторизация: ${err.message}`)));
 };
+
+// выйти
+module.exports.logout = (req, res, next) => { // ??
+  User.findById(req.user._id)
+    .then(() => {
+      // const token = req.headers.authorization;
+      res.send({ message: 'logout' });
+    })
+    .catch((err) => next({ message: err }));
+};
+
 
 // изменить информацию о пользователе (о себе)
 module.exports.updateMyProfile = (req, res, next) => {

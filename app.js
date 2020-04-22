@@ -1,4 +1,6 @@
+/* eslint-disable operator-linebreak */
 /* eslint-disable no-unused-vars */
+
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
@@ -8,7 +10,7 @@ const helmet = require('helmet');
 const { errors } = require('celebrate');
 const cors = require('cors');
 const config = require('./config');
-const auth = require('./middlewares/auth');
+// const auth = require('./middlewares/auth');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const app = express();
@@ -30,10 +32,9 @@ mongoose.connect(config.CONNECTION_ADDRESS, {
 // лог запросов
 app.use(requestLogger);
 
-app.use('/', require('./routes/crashTest')); // CRASH TEST - REMOVE AFTER ALL!!
 app.use('/', require('./routes/sign'));
-app.use('/', auth, require('./routes/users'));
-app.use('/', auth, require('./routes/cards'));
+app.use('/', require('./routes/users'));
+app.use('/', require('./routes/cards'));
 
 app.use((req, res) => res.status(404).send({ message: 'Запрашиваемый ресурс не найден' }));
 
@@ -47,8 +48,8 @@ app.use((err, req, res, next) => {
   res
     .status(statusCode)
     .send({
-      message: statusCode === 500
-        ? 'На сервере произошла ошибка' : message,
+      message: statusCode === 500 ?
+        'На сервере произошла ошибка' : message,
     });
 });
 
