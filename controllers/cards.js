@@ -11,29 +11,14 @@ module.exports.getCards = (req, res, next) => {
     .catch((err) => next({ message: err.message }));
 };
 
-
 // добавить карточку
 module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
-  // console.log(req.user._id);
-
   Card.create({ name, link, owner: req.user._id })
-    .populate({ path: 'owner', model: User })
-    .then((card) => {
-      res.send({ data: card });
-    })
+    // .populate({ path: 'owner', model: User })
+    .then((card) => res.send({ data: card }))
     .catch((err) => next({ message: err.message }));
-  console.log(req.user._id);
 };
-
-// module.exports.test = (req, res, next) => {
-//   User.findByIdAndUpdate(req.user._id, { $addToSet: { cards: Card } }, { new: true })
-//     .orFail(() => new NotFoundError('Нет пользователя с таким id'))
-//     .then((card) => res.send({ data: card }))
-//     .catch((err) => next({ message: err.message }))
-//     .next();
-// };
-
 
 // удалить карточку
 module.exports.deleteCard = (req, res, next) => {
