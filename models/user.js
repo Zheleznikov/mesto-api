@@ -39,11 +39,6 @@ const userSchema = new mongoose.Schema({
     minlength: 8,
     select: false,
   },
-  cards: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'user',
-    default: [],
-  }],
 });
 
 // eslint-disable-next-line func-names

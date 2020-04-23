@@ -77,14 +77,12 @@ module.exports.createUser = (req, res, next) => {
 // залогиниться
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
-  console.log(email, password); // ПОТОМ УДАЛИТЬ
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
       if (!user.email) {
         throw new NotFoundError('Такого пользователя нет');
       }
-      console.log('авторизация прошла успешно'); // ПОТОМ УДАЛИТЬ
       const token = jwt.sign({ _id: user._id },
         NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
       res.send({ user, token });
@@ -107,10 +105,10 @@ module.exports.logout = (req, res, next) => { // ??
 module.exports.updateMyProfile = (req, res, next) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(req.user._id, { name, about }, {
-      new: true,
-      runValidators: true,
-      upsert: true,
-    })
+    new: true,
+    runValidators: true,
+    upsert: true,
+  })
     .then((user) => res.send({ data: user }))
     .catch((err) => next(new BadRequestError(err.message)));
 };
@@ -119,10 +117,10 @@ module.exports.updateMyProfile = (req, res, next) => {
 module.exports.updateMyAvatar = (req, res, next) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(req.user._id, { avatar }, {
-      new: true,
-      runValidators: true,
-      upsert: true,
-    })
+    new: true,
+    runValidators: true,
+    upsert: true,
+  })
     .then((user) => res.send({ data: user }))
     .catch((err) => next(new BadRequestError(err.message)));
 };
