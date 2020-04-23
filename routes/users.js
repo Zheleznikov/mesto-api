@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
-const { getUsers, getCurrentUser, updateMyProfile, updateMyAvatar, getSigninUser } = require('../controllers/users');
+const { getUsers, getCurrentUser, updateMyProfile, updateMyAvatar, getSigninUser, postMe } = require('../controllers/users');
 const urlReg = require('../validation__modules/urlReg');
 const auth = require('../middlewares/auth');
 
@@ -16,6 +16,7 @@ router.get('/users/:id', auth, celebrate({
 
 // получить информацию о себе
 router.get('/me', auth, getSigninUser);
+router.post('/me', auth, postMe);
 
 // обновить информацию о себе
 router.patch('/users/me', auth, celebrate({

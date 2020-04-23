@@ -44,6 +44,13 @@ module.exports.getSigninUser = (req, res, next) => {
     .catch((err) => next({ message: err }));
 };
 
+// отправить данные о себе
+module.exports.postMe = (req, res, next) => {
+  User.findById(req.user._id)
+    .then(() => res.send({ message: 'ok' }))
+    .catch((err) => next(new BadRequestError(err.message)));
+};
+
 // создать пользователя
 module.exports.createUser = (req, res, next) => {
   bcrypt.hash(req.body.password, 10)
@@ -100,10 +107,10 @@ module.exports.logout = (req, res, next) => { // ??
 module.exports.updateMyProfile = (req, res, next) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(req.user._id, { name, about }, {
-    new: true,
-    runValidators: true,
-    upsert: true,
-  })
+      new: true,
+      runValidators: true,
+      upsert: true,
+    })
     .then((user) => res.send({ data: user }))
     .catch((err) => next(new BadRequestError(err.message)));
 };
@@ -112,10 +119,10 @@ module.exports.updateMyProfile = (req, res, next) => {
 module.exports.updateMyAvatar = (req, res, next) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(req.user._id, { avatar }, {
-    new: true,
-    runValidators: true,
-    upsert: true,
-  })
+      new: true,
+      runValidators: true,
+      upsert: true,
+    })
     .then((user) => res.send({ data: user }))
     .catch((err) => next(new BadRequestError(err.message)));
 };
